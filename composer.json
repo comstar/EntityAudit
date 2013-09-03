@@ -1,5 +1,5 @@
 {
-    "name": "simplethings/entity-audit-bundle",
+    "name": "comstar/entity-audit-bundle",
     "license": "New BSD",
     "keywords": ["Persistence", "Database", "Audit"],
     "description": "Audit for Doctrine Entities",
@@ -10,7 +10,7 @@
         "symfony/framework-bundle": "~2.0"
     },
     "autoload": {
-        "psr-0": {"SimpleThings\\EntityAudit": "src/"}
+        "psr-0": {"Comstar\\EntityAudit": "src/"}
     },
     "extra": {
         "branch-alias": {
