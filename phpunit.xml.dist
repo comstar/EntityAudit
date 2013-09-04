@@ -2,7 +2,7 @@
 
 <phpunit bootstrap="./tests/bootstrap.php" colors="true">
     <testsuites>
-        <testsuite name="SimpleThings EntityAudit">
+        <testsuite name="Comstar EntityAudit">
             <directory suffix="Test.php">./tests</directory>
         </testsuite>
     </testsuites>
@@ -11,7 +11,7 @@
         <whitelist>
             <directory>./src</directory>
             <exclude>
-                <directory>./src/SimpleThings/EntityAudit/Resources</directory>
+                <directory>./src/Comstar/EntityAudit/Resources</directory>
             </exclude>
         </whitelist>
     </filter>
