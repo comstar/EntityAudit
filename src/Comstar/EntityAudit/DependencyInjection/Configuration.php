@@ -1,6 +1,6 @@
 <?php
 
-namespace Cosmtar\EntityAudit\DependencyInjection;
+namespace Comstar\EntityAudit\DependencyInjection;
 
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
