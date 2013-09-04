@@ -36,7 +36,7 @@ services:
         calls:
             - [ setAuditedEntityClasses, [ %comstar.entityaudit.audited_entities% ] ]
             - [ setTablePrefix, [ %comstar.entityaudit.table_prefix% ] ]
-            - [ setTableSuffix, [ %comstar.entityaudit.table_suffix$ ] ]
+            - [ setTableSuffix, [ %comstar.entityaudit.table_suffix% ] ]
             - [ setRevisionFieldName, [ %comstar.entityaudit.revision_field_name% ] ]
             - [ setRevisionTypeFieldName, [ %comstar.entityaudit.revision_type_field_name% ] ]
             - [ setRevisionTableName, [ %comstar.entityaudit.revision_table_name% ] ]
