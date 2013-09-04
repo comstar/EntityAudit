@@ -43,7 +43,7 @@ Autoload
     'Comstar\\EntityAudit' => __DIR__.'/../vendor/bundles/',
 
 
-Load extension "simple_things_entity_audit" and specify the audited entities (yes, that ugly for now!)
+Load extension "comstar_entity_audit" and specify the audited entities (yes, that ugly for now!)
 
     comstar_entity_audit:
         audited_entities:
