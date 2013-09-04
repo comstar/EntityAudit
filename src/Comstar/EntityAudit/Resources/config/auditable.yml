@@ -41,7 +41,7 @@ services:
             - [ setRevisionTypeFieldName, [ %comstar.entityaudit.revision_type_field_name% ] ]
             - [ setRevisionTableName, [ %comstar.entityaudit.revision_table_name% ] ]
             - [ setRevisionIdFieldType, [ %comstar.entityaudit.revision_id_field_type% ] ]
-     comstar_entityaudit.request.current_user_listener:
+    comstar_entityaudit.request.current_user_listener:
         class: Comstar\EntityAudit\Request\CurrentUserListener
         arguments: 
             - "@comstar_entityaudit.config"
