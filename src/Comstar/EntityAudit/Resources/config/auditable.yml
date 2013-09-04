@@ -1,47 +1,47 @@
 parameters:
-	comstar.entityaudit.audited_entities:
-		type: collection
-	comstar.entityaudit.table_prefix:
-		type: string
-	comstar.entityaudit.table_suffix:
-		type: string
-	comstar.entityaudit.revision_field_name:
-		type: string
-	comstar.entityaudit.revision_table_name:
-		type: string
-	comstar.entityaudit.revision_id_field_type:
-		type: string
+    comstar.entityaudit.audited_entities:
+        type: collection
+    comstar.entityaudit.table_prefix:
+        type: string
+    comstar.entityaudit.table_suffix:
+        type: string
+    comstar.entityaudit.revision_field_name:
+        type: string
+    comstar.entityaudit.revision_table_name:
+        type: string
+    comstar.entityaudit.revision_id_field_type:
+        type: string
 
 services:
-	comstar_entityaudit.manager:
-		class: Comstar\EntityAudit\AuditManager
-		arguments: [ @comstar_entityaudit.config ]
-	comstar_entityaudit.reader:
-		class: Comstar\EntityAudit\AuditReader
-		factory_service: comstar_entityaudit.manager
-		factory_method: createAuditReader
-		arguments: [ @doctrine.orm.default_entity_manager ]
-	comstar_entityaudit.log_revisions_listener:
-		class: Comstar\EntityAudit\EventListener\LogRevisionsListener
-		arguments: [ @comstar_entityaudit.manager ]
-		tags:
-			- { name: doctrine.event_subscriber, connection: default }
-	comstar_entityaudit.create_schema_listener:
-		class: Comstar\EntityAudit\EventListener\CreateSchemaListener
-		arguments: [ @comstar_entityaudit.manager ]
-		tags:
-			- { name: doctrine.event_subscriber, connection: default }
-	comstar_entityaudit.config:
-		class: Comstar\EntityAudit\AuditConfiguration
-		calls:
-			- [ setAuditedEntityClasses, [ %comstar.entityaudit.audited_entities% ] ]
-	        - [ setTablePrefix, [ %comstar.entityaudit.table_prefix% ] ]
-	        - [ setTableSuffix, [ %comstar.entityaudit.table_suffix$ ] ]
-	        - [ setRevisionFieldName, [ %comstar.entityaudit.revision_field_name% ] ]
-	        - [ setRevisionTypeFieldName, [ %comstar.entityaudit.revision_type_field_name% ] ]
+    comstar_entityaudit.manager:
+        class: Comstar\EntityAudit\AuditManager
+        arguments: [ @comstar_entityaudit.config ]
+    comstar_entityaudit.reader:
+        class: Comstar\EntityAudit\AuditReader
+        factory_service: comstar_entityaudit.manager
+        factory_method: createAuditReader
+        arguments: [ @doctrine.orm.default_entity_manager ]
+    comstar_entityaudit.log_revisions_listener:
+        class: Comstar\EntityAudit\EventListener\LogRevisionsListener
+        arguments: [ @comstar_entityaudit.manager ]
+        tags:
+            - { name: doctrine.event_subscriber, connection: default }
+    comstar_entityaudit.create_schema_listener:
+        class: Comstar\EntityAudit\EventListener\CreateSchemaListener
+        arguments: [ @comstar_entityaudit.manager ]
+        tags:
+            - { name: doctrine.event_subscriber, connection: default }
+    comstar_entityaudit.config:
+        class: Comstar\EntityAudit\AuditConfiguration
+        calls:
+            - [ setAuditedEntityClasses, [ %comstar.entityaudit.audited_entities% ] ]
+            - [ setTablePrefix, [ %comstar.entityaudit.table_prefix% ] ]
+            - [ setTableSuffix, [ %comstar.entityaudit.table_suffix$ ] ]
+            - [ setRevisionFieldName, [ %comstar.entityaudit.revision_field_name% ] ]
+            - [ setRevisionTypeFieldName, [ %comstar.entityaudit.revision_type_field_name% ] ]
             - [ setRevisionTableName, [ %comstar.entityaudit.revision_table_name% ] ]
-            - [ setRevisionFieldType, [ %comstar.entityaudit.revision_field_type% ] ]
-    comstar_entityaudit.request.current_user_listener:
+            - [ setRevisionIdFieldType, [ %comstar.entityaudit.revision_id_field_type% ] ]
+     comstar_entityaudit.request.current_user_listener:
         class: Comstar\EntityAudit\Request\CurrentUserListener
         arguments: 
             - "@comstar_entityaudit.config"

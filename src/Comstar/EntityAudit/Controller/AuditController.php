@@ -38,7 +38,7 @@ class AuditController extends Controller
      */
     protected function getAuditReader()
     {
-        return $this->get('simplethings_entityaudit.reader');
+        return $this->get('comstar_entityaudit.reader');
     }
 
     /**
@@ -46,7 +46,7 @@ class AuditController extends Controller
      */
     protected function getAuditManager()
     {
-        return $this->get('simplethings_entityaudit.manager');
+        return $this->get('comstar_entityaudit.manager');
     }
 
     /**
