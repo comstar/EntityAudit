@@ -31,7 +31,7 @@ Register Bundle in AppKernel.php
     {
         $bundles = array(
             //...
-            new SimpleThings\EntityAudit\SimpleThingsEntityAuditBundle(),
+            new Comstar\EntityAudit\SimpleThingsEntityAuditBundle(),
             //...
         );
         return $bundles;
@@ -40,12 +40,12 @@ Register Bundle in AppKernel.php
 
 Autoload
 
-    'SimpleThings\\EntityAudit' => __DIR__.'/../vendor/bundles/',
+    'Comstar\\EntityAudit' => __DIR__.'/../vendor/bundles/',
 
 
 Load extension "simple_things_entity_audit" and specify the audited entities (yes, that ugly for now!)
 
-    simple_things_entity_audit:
+    comstar_entity_audit:
         audited_entities:
             - MyBundle\Entity\MyEntity
             - MyBundle\Entity\MyEntity2
@@ -62,13 +62,13 @@ instance and configure the two event listeners.
     <?php
     use Doctrine\ORM\EntityManager;
     use Doctrine\Common\EventManager;
-    use SimpleThings\EntityAudit\AuditConfiguration;
-    use SimpleThings\EntityAudit\AuditManager;
+    use Comstar\EntityAudit\AuditConfiguration;
+    use Comstar\EntityAudit\AuditManager;
 
     $auditconfig = new AuditConfiguration();
     $auditconfig->setAuditedEntityClasses(array(
-        'SimpleThings\EntityAudit\Tests\ArticleAudit',
-        'SimpleThings\EntityAudit\Tests\UserAudit'
+        'Cosmtar\EntityAudit\Tests\ArticleAudit',
+        'Comstar\EntityAudit\Tests\UserAudit'
     ));
     $evm = new EventManager();
     $auditManager = new AuditManager($auditconfig);
@@ -81,9 +81,9 @@ instance and configure the two event listeners.
 
 ## Usage
 
-Querying the auditing information is done using a `SimpleThings\EntityAudit\AuditReader` instance.
+Querying the auditing information is done using a `Comstar\EntityAudit\AuditReader` instance.
 
-In Symfony2 the AuditReader is registered as the service "simplethings_entityaudit.reader":
+In Symfony2 the AuditReader is registered as the service "comstar_entityaudit.reader":
 
     <?php
 
@@ -91,7 +91,7 @@ In Symfony2 the AuditReader is registered as the service "simplethings_entityaud
     {
         public function indexAction()
         {
-            $auditReader = $this->container->get("simplethings_entityaudit.reader");
+            $auditReader = $this->container->get("comstar_entityaudit.reader");
         }
     }
 
@@ -107,7 +107,7 @@ This command also returns the state of the entity at the given revision, even if
 to that entity was made in a revision before the given one:
 
     <?php
-    $articleAudit = $auditReader->find('SimpleThings\EntityAudit\Tests\ArticleAudit', $id = 1, $rev = 10);
+    $articleAudit = $auditReader->find('Comstar\EntityAudit\Tests\ArticleAudit', $id = 1, $rev = 10);
 
 Instances created through `AuditReader#find()` are *NOT* injected into the EntityManagers UnitOfWork,
 they need to be merged into the EntityManager if it should be reattached to the persistence context
@@ -116,7 +116,7 @@ in that old version.
 ### Find Revision History of an audited entity
 
     <?php
-    $revisions = $auditReader->findRevisions('SimpleThings\EntityAudit\Tests\ArticleAudit', $id = 1);
+    $revisions = $auditReader->findRevisions('Comstar\EntityAudit\Tests\ArticleAudit', $id = 1);
 
 A revision has the following API:
 
@@ -146,7 +146,7 @@ A changed entity has the API:
 ### Find Current Revision of an audited Entity
 
     <?php
-    $revision = $auditReader->getCurrentRevision('SimpleThings\EntityAudit\Tests\ArticleAudit', $id = 3);
+    $revision = $auditReader->getCurrentRevision('Comstar\EntityAudit\Tests\ArticleAudit', $id = 3);
 
 ## Setting the Current Username
 
@@ -157,10 +157,10 @@ In a standalone app or Symfony command you have to set the username to a specifi
 
     <?php
     // Symfony2 Context
-    $container->get('simplethings_entityaudit.config')->setCurrentUsername( "beberlei" );
+    $container->get('comstar_entityaudit.config')->setCurrentUsername( "beberlei" );
 
     // Standalone App
-    $auditConfig = new \SimpleThings\EntityAudit\AuditConfiguration();
+    $auditConfig = new \Comstar\EntityAudit\AuditConfiguration();
     $auditConfig->setCurrentUsername( "beberlei" );
 
 ## Viewing auditing
@@ -172,17 +172,17 @@ only appropriate users can get access)**
 
     # app/config/routing.yml
 
-    simple_things_entity_audit:
+    comstar_entity_audit:
         resource: "@SimpleThingsEntityAuditBundle/Resources/config/routing.yml"
         prefix: /audit
 
 This provides you with a few different routes:
 
- * simple_things_entity_audit_home -- Displays a paginated list of revisions, their timestamps and the user who performed the revision
- * simple_things_entity_audit_viewrevision -- Displays the classes that were modified in a specific revision
- * simple_things_entity_audit_viewentity -- Displays the revisions where the specified entity was modified
- * simple_things_entity_audit_viewentity_detail -- Displays the data for the specified entity at the specified revision
- * simple_things_entity_audit_compare -- Allows you to compare the changes of an entity between 2 revisions
+ * comstar_entity_audit_home -- Displays a paginated list of revisions, their timestamps and the user who performed the revision
+ * comstar_entity_audit_viewrevision -- Displays the classes that were modified in a specific revision
+ * comstar_entity_audit_viewentity -- Displays the revisions where the specified entity was modified
+ * comstar_entity_audit_viewentity_detail -- Displays the data for the specified entity at the specified revision
+ * comstar_entity_audit_compare -- Allows you to compare the changes of an entity between 2 revisions
 
 
 ## TODOS
