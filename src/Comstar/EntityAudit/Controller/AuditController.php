@@ -57,11 +57,17 @@ class AuditController extends Controller
      */
     public function indexAction($page = 1)
     {
+        $entity = array();
         $reader = $this->getAuditReader();
         $revisions = $reader->findRevisionHistory(20, 20 * ($page - 1));
+        foreach( $revisions as $revision ) {
+            $entity[$revision->getRev()]=$this->getAuditReader()->findEntitiesChangedAtRevision($revision->getRev());
+        }
 
         return $this->render('ComstarEntityAuditBundle:Audit:index.html.twig', array(
             'revisions' => $revisions,
+            'entity' => $entity,
+            'page' => $page,
         ));
     }
 
