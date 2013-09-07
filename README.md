@@ -31,7 +31,7 @@ Register Bundle in AppKernel.php
     {
         $bundles = array(
             //...
-            new Comstar\EntityAudit\SimpleThingsEntityAuditBundle(),
+            new Comstar\EntityAudit\ComstarEntityAuditBundle(),
             //...
         );
         return $bundles;
@@ -173,7 +173,7 @@ only appropriate users can get access)**
     # app/config/routing.yml
 
     comstar_entity_audit:
-        resource: "@SimpleThingsEntityAuditBundle/Resources/config/routing.yml"
+        resource: "@ComstarEntityAuditBundle/Resources/config/routing.yml"
         prefix: /audit
 
 This provides you with a few different routes:
@@ -184,7 +184,86 @@ This provides you with a few different routes:
  * comstar_entity_audit_viewentity_detail -- Displays the data for the specified entity at the specified revision
  * comstar_entity_audit_compare -- Allows you to compare the changes of an entity between 2 revisions
 
+## Extending for use with Gedmo/SoftDeletable
 
+Rather than building in a bundle requirement for Gedmo/DoctrineExtensionsBundle I decided to add instructions here for extending this bundle.
+You will first need to create a new bundle in your project and extend the ComstarEntityAuditBundle through the getParent() method. You will
+also need to extend the build() method so that we can add a compiler pass to override the comstar_entityaudit.log_revisions_listener with
+our own version of the same.
+
+    # Acme/AcmeDemoBundle/AcmeDemoBundle.php
+    
+    class AcmeDemoBundle extends Bundle
+    {
+        public function getParent()
+        {
+            return 'ComstarEntityAuditBundle';
+        }
+        
+        public build(ContainerBuilder $container)
+        {
+            parent::build($container);
+            $container->addCompilerPass(new OverrideServiceCompilerPass());
+        }
+    }
+    
+Now we need to create the compiler pass in the DependencyInjection directory of our AcmeDemoBundle.
+
+    # Acme/AcmeDemoBundle/DependencyInjection/Compiler/OverrideCompilerPass.php
+    
+    namespace Acme\AcmeDemoBundle\DependencyInjection\Compiler;
+
+    use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
+    use Symfony\Component\DependencyInjection\ContainerBuilder;
+
+    class OverrideServiceCompilerPass implements CompilerPassInterface
+    {
+        public function process(ContainerBuilder $container)
+        {
+            $definition = $container->getDefinition('comstar_entityaudit.log_revisions_listener');
+            $definition->setClass('Acme\AcmeDemoBundle\EventListener\LogRevisionsListener');
+        }
+    }
+    
+With the service container class changed we now have to create our new event listener and we do that in the EventListener
+directory of our Acme/AcmeDemoBundle.  We have to change the use statement to add the Gedmo SoftDeletableListener, update
+the getSubscribedEvents() method, and add a postSoftDelete() method.
+
+    # Acme/AcmeDemoBundle/EventListener/LogRevisionsListener.php
+    
+    use Gedmo\SoftDeleteable\SoftDeleteableListener;
+    class LogRevisionsListener implements EventSubscriber
+    {
+        ...
+     
+        public function getSubscribedEvents()
+        {
+            return array(Events::onFlush, Events::postPersists, Events::postUpdate, SoftDeletableListener::POST_SOFT_DELETE);
+        }
+        
+        public function postSoftDelete(LifecycleEventArgs $eventArgs)
+        {
+            // onFlush was not executed before, initialize everything
+            $this->em = $eventArgs->getEntityManager();
+            $this->conn = $this->em->getConnection();
+            $this->uow = $this->em->getUnitOfWork();
+            $this->platform = $this->conn->getDatabasePlatform();
+            $this->revisionId = null; // reset revision
+            $entity = $eventArgs->getEntity();
+
+            $class = $this->em->getClassMetadata(get_class($entity));
+            if (!$this->metadataFactory->isAudited($class->name)) {
+                return;
+            }
+
+            $entityData = array_merge($this->getOriginalEntityData($entity), $this->uow->getEntityIdentifier($entity));
+            $this->saveRevisionEntityData($class, $entityData, 'SDEL');
+        }
+    }
+    
+Entities that are soft deleted in the database will now be recorded in the revisions table with a SDEL flag so that we know 
+who soft deleted the record and when.
+    
 ## TODOS
 
 * Currently only works with auto-increment databases
