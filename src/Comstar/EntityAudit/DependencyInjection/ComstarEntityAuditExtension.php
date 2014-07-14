@@ -40,8 +40,22 @@ class ComstarEntityAuditExtension extends Extension
         $loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__ . '/../Resources/config'));
         $loader->load('auditable.yml');
 
-        foreach ($config as $key => $value) {
-            $container->setParameter("comstar.entityaudit." . $key, $value);
+        $configurables = array(
+            'audited_entities',
+            'table_prefix',
+            'table_suffix',
+            'revision_field_name',
+            'revision_type_field_name',
+            'revision_table_name',
+            'revision_id_field_type'
+        );
+
+        foreach ($configurables as $key) {
+            $container->setParameter("comstar.entityaudit." . $key, $config[$key]);
+        }
+
+        if (true === $config['listener']['current_username']) {
+            $loader->load('current_username.yml');
         }
     }
 }

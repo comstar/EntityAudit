@@ -1,0 +1,11 @@
+parameters:
+    comstar.entityaudit.request.current_user_listener.class:
+        - Comstar\EntityAudit\Request\CurrentUserListener
+
+services:
+    comstar_entityaudit.request.current_user_listener:
+        class: Comstar\EntityAudit\Request\CurrentUserListener
+        arguments: [ @comstar_entityaudit.config, '@?security.context=' ]
+        tags:
+            - { name: kernel.event_listener, event: kernel.request, method: handle }
+
